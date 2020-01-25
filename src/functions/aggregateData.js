@@ -91,12 +91,13 @@ export default async function aggregateData(setState, parsedData) {
   });
 
   //#### Left off here, changing how state is being made. The goal is to then output on screen with dropdown filters#####
-  //console.log(categoryValueTime);
+  console.log(categoryValueTime);
 
   setState(prev => ({
     ...prev,
     records: { byDay: data, raw: parsedData },
     categoryValueTime,
+    categories,
     dataLoaded: true,
     focus: categories[0]
   }));

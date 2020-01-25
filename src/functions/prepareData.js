@@ -13,8 +13,8 @@ export default async function prepareData(setState) {
     header: true,
     skipEmptyLines: true
   });
-
-  //removes unneeded keys returned by papa parse
+console.log('parsed data', parsedData)
+  //removes unneeded keys returned by papa parse --bad comment
   parsedData = await parsedData.data;
 
   //Set data to be aggregated

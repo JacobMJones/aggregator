@@ -16,11 +16,12 @@ const initialState = {
 
 function App() {
   const [state, setState] = useState(initialState);
-  console.log(state.categoryValueTime);
+
   useEffect(() => {
     !state.dataLoaded && prepareData(setState);
     setFocus(state, setState);
   }, [state.focus, state.categoryValueTime]);
+
 
   return (
     <>
