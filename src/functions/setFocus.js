@@ -1,25 +1,19 @@
 import dataPrepFunctions from "./dataPrepFunctions";
 
 export default function setFocus(state, setState) {
-  console.log('calling setFocus')
+
   //array to return, is iterated over in app.js's return
   const focusArray = [];
-
   //array of unique values from category, temp because duplicates will be stripped
   const tempPossible = [];
-
   /* find records matching state.focus
     add them to focusArray -- ToDo this needs to change there is a new state structure --*/
   for (const entry in state.categoryValueTime) {
-  //  console.log('entry', entry)
     for (const rec in state.categoryValueTime[entry]) {
-     // console.log('rec in entry', rec, state.focus)
- 
-      // rec[state.focus] &&
-      //   focusArray.push({ timestamp: rec.Timestamp, focus: rec[state.focus] });
+      state.focus === entry && tempPossible.push(rec)
     }
   }
-  console.log('focusArray', focusArray)
+
   //create possibleValues array
   for (const entry of state.data) {
     for (const rec of entry.records) {
@@ -35,7 +29,7 @@ export default function setFocus(state, setState) {
       }
     }
   }
-  //remove duplicates from tempPossible
+
   const possibleValues = tempPossible.filter(dataPrepFunctions.onlyUnique);
 
   //create startStops

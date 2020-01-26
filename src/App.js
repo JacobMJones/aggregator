@@ -20,8 +20,7 @@ function App() {
   useEffect(() => {
     !state.dataLoaded && prepareData(setState);
     setFocus(state, setState);
-  }, [state.focus, state.categoryValueTime]);
-
+  }, [state.focus]);
 
   return (
     <>
@@ -29,8 +28,6 @@ function App() {
         "loading"
       ) : (
         <>
-          {/* Below needs to change when new way of making state finished 
-          Still needs state.categories updated so dropdown works*/}
           <Dropdown
             dropdownValues={state.categories}
             stateKey={"focus"}
@@ -43,31 +40,15 @@ function App() {
           />
           <br />
 
-          <>
-            {state.categoryValueTime.Distractions && (
-              <div>
-                {state.categoryValueTime.Distractions["start reddit"].map((item, index)=>{
-                    return (
-                      <div key={"start reddit" + index}>
-                        <b>{item}</b> {item.timestamp}
-                      </div>
-                    );
-                })}
-              </div>
+          {/* Displays timestamps related to category(focus) and value(focusedValue) */}
+          {/* This needs to be cleaned up. Hack way of dealing with when a focus and focusValue don't match */}
+          {state.focusedValue &&
+            state.categoryValueTime[state.focus][state.focusedValue] &&
+            state.categoryValueTime[state.focus][state.focusedValue].map(
+              (item, index) => {
+                return <div key={"time" + index}>{item}</div>;
+              }
             )}
-          </>
-          <br />
-
-          {state.focusArray.map((item, index) => {
-            if (item.focus.includes(state.focusedValue)) {
-              console.log(item.focus + state.focusedValue);
-              return (
-                <div key={"time" + index}>
-                  <b>{state.focusedValue}</b> {item.timestamp}
-                </div>
-              );
-            }
-          })}
         </>
       )}
     </>
