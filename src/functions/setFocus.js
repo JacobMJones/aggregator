@@ -9,7 +9,7 @@ export default function setFocus(state, setState) {
     const possibleValues = tempPossible.filter(dataPrepFunctions.onlyUnique);
     setState(prev => ({
       ...prev,
-      possibleValues
+      possibleValues,
     }));
   }
 }

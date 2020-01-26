@@ -14,7 +14,7 @@ const Dropdown = ({stateKey, setState, dropdownValues}) => {
     >
       {dropdownValues && dropdownValues.map((item, index) => {
         return (
-          <option key={`option ${item}`} defaultValue={index === 0 && item} value={item}>
+          <option key={`option ${item}`} value={item}>
             {item}
           </option>
         );
