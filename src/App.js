@@ -46,7 +46,7 @@ function App() {
             state.categoryValueTime[state.focus][state.focusedValue] &&
             state.categoryValueTime[state.focus][state.focusedValue].map(
               (item, index) => {
-                return <div key={"time" + index}>{item}</div>;
+                return <div key={"time" + index}>{index}. {item}</div>;
               }
             )}
         </>
