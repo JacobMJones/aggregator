@@ -13,7 +13,8 @@ export default async function prepareData(setState) {
     header: true,
     skipEmptyLines: true
   });
-  
+
   //Send data to be aggregated
+  console.log(parsedData.data)
   aggregateDate(setState, parsedData.data)
 }

@@ -1,9 +1,8 @@
 import dataPrepFunctions from "./dataPrepFunctions";
-import time from "../data/records.csv";
-import Papa from "papaparse";
 
 export default async function aggregateData(setState, parsedData) {
   const categories = [];
+  let categoryValues = [];
   const aggregates = [];
   let categoryValueTime = {};
   let allCatValueTime = {};
@@ -15,32 +14,27 @@ export default async function aggregateData(setState, parsedData) {
     x && x !== "Timestamp" && categories.push(x);
   });
 
-  const dayTimeCategoryValue = dataPrepFunctions.extractDays(parsedData);
-
   //*** categoryValueTimestamp ***
-  //First create aggregates array, which is an array of objects. The key is the category and its value is an array,
-  //each slot contains one of the possible values within a category
+  //First create an array of objects. The key is the category and its value is an array,
+  //each slot of which contains one of the possible values within a category
 
-  let categoryValues = [];
-  for (const cat of categories) {
-    if (cat !== "Timestamp") {
-      for (const rec of parsedData) {
-        if (rec[cat]) {
-          const seperatedValues = rec[cat].split(",");
-          for (const item of seperatedValues) {
-            const itemWithoutWhitespace = item.trim();
-            categoryValues.push(itemWithoutWhitespace);
-          }
+  for (const category of categories) {
+    for (const record of parsedData) {
+      if (record[category]) {
+        const seperatedValues = record[category].split(",");
+        for (const item of seperatedValues) {
+          const itemWithoutWhitespace = item.trim();
+          categoryValues.push(itemWithoutWhitespace);
         }
       }
-      const valuesNoDuplicates = categoryValues.filter(
-        dataPrepFunctions.onlyUnique
-      );
-      aggregates.push({ [cat]: valuesNoDuplicates });
-      categoryValues = [];
     }
+    aggregates.push({
+      [category]: categoryValues.filter(dataPrepFunctions.onlyUnique)
+    });
+    categoryValues = [];
   }
 
+  //Second match timestamps with categoryValues and build final object
   aggregates.forEach(item => {
     const name = Object.keys(item)[0];
     const categoryValueArrays = Object.values(item);
@@ -50,6 +44,7 @@ export default async function aggregateData(setState, parsedData) {
     for (const categoryValueArray of categoryValueArrays) {
       for (const categoryValue of categoryValueArray) {
         for (const record of parsedData) {
+          console.log(record, name)
           if (record[name]) {
             const splitRecord = record[name].split(",");
             for (const finalValue of splitRecord) {
@@ -68,6 +63,9 @@ export default async function aggregateData(setState, parsedData) {
     categoryValueTime = {};
   });
 
+  //aggregates on day with all timestamps and their category and category value
+  const dayTimeCategoryValue = dataPrepFunctions.extractDays(parsedData);
+  console.log(allCatValueTime)
   setState(prev => ({
     ...prev,
     dayTimeCategoryValue,
