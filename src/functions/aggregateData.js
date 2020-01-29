@@ -1,76 +1,63 @@
 import dataPrepFunctions from "./dataPrepFunctions";
+import _ from "lodash";
 
 export default async function aggregateData(setState, parsedData) {
-  const categories = [];
-  let categoryValues = [];
-  const aggregates = [];
   let categoryValueTime = {};
-  let allCatValueTime = {};
+  let categories = [];
+  let categoryValues = [];
 
-  // populate categories array from headers in parsedData, exclude Timestamp and blank headers. categories is
-  // used in the dropdowns and in this script for aggregation
+  let asSingleEntries = [];
 
-  Object.keys(parsedData[1]).forEach(x => {
-    x && x !== "Timestamp" && categories.push(x);
-  });
-
-  //*** categoryValueTimestamp ***
-  //First create an array of objects. The key is the category and its value is an array,
-  //each slot of which contains one of the possible values within a category
-
-  for (const category of categories) {
-    for (const record of parsedData) {
-      if (record[category]) {
-        const seperatedValues = record[category].split(",");
-        for (const item of seperatedValues) {
-          const itemWithoutWhitespace = item.trim();
-          categoryValues.push(itemWithoutWhitespace);
-        }
-      }
-    }
-    aggregates.push({
-      [category]: categoryValues.filter(dataPrepFunctions.onlyUnique)
-    });
-    categoryValues = [];
-  }
-
-  //Second match timestamps with categoryValues and build final object
-  aggregates.forEach(item => {
-    const name = Object.keys(item)[0];
-    const categoryValueArrays = Object.values(item);
-    let times = [];
-
-    //refactor??
-    for (const categoryValueArray of categoryValueArrays) {
-      for (const categoryValue of categoryValueArray) {
-        for (const record of parsedData) {
-          console.log(record, name)
-          if (record[name]) {
-            const splitRecord = record[name].split(",");
-            for (const finalValue of splitRecord) {
-              const trimmedFinalValue = finalValue.trim();
-              if (trimmedFinalValue === categoryValue) {
-                times.push(record.Timestamp);
-              }
-            }
+  //makes each entry a single record
+  parsedData.map(item => {
+    Object.keys(item).forEach(key => {
+      if (item[key]) {
+        if (key !== "Timestamp") {
+          const singleValue = item[key].split(",");
+          for (const val of singleValue) {
+            asSingleEntries.push({
+              category: key,
+              categoryValue: val.trim(),
+              timestamp: item.Timestamp
+            });
           }
         }
-        categoryValueTime[categoryValue] = times;
-        times = [];
       }
+    });
+  });
+
+  //aggregate categoryValues and timestamps around categories
+  asSingleEntries.map(item => {
+    //check if category have been made
+    if (categories.includes(item.category)) {
+      //check if values added have been made
+      if (categoryValues.includes(item.categoryValue)) {
+        categoryValueTime[item.category][item.categoryValue].push(
+          item.timestamp
+        );
+      } else {
+        let t = [];
+        t.push(item.timestamp);
+        categoryValues.push(item.categoryValue);
+        categoryValueTime[item.category][item.categoryValue] = t;
+      }
+    } else {
+      categories.push(item.category);
+      categoryValues.push(item.categoryValue);
+      let t = [];
+      t.push(item.timestamp);
+      categoryValueTime[item.category] = { [item.categoryValue]: t };
     }
-    allCatValueTime[name] = categoryValueTime;
-    categoryValueTime = {};
   });
 
   //aggregates on day with all timestamps and their category and category value
   const dayTimeCategoryValue = dataPrepFunctions.extractDays(parsedData);
-  console.log(allCatValueTime)
+  // console.log(allCatValueTime);
   setState(prev => ({
     ...prev,
     dayTimeCategoryValue,
-    categoryValueTime: allCatValueTime,
-    categories,
+    categoryValueTime,
+     categories,
     dataLoaded: true,
     focus: categories[1]
   }));

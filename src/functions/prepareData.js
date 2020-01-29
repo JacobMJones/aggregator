@@ -1,10 +1,9 @@
 import dataPrepFunctions from "./dataPrepFunctions";
-import records from "../data/records.csv";
-import aggregateDate from "./aggregateData.js"
+import records from "../data/rec.csv";
+import aggregateDate from "./aggregateData.js";
 import Papa from "papaparse";
 
 export default async function prepareData(setState) {
-
   //pull csv data into the app
   const csvData = await dataPrepFunctions.fetchCsv(records);
 
@@ -15,6 +14,7 @@ export default async function prepareData(setState) {
   });
 
   //Send data to be aggregated
-  console.log(parsedData.data)
-  aggregateDate(setState, parsedData.data)
+  
+
+  aggregateDate(setState, parsedData.data);
 }
