@@ -6,20 +6,23 @@ export default async function aggregateData(
   asSingleEntries,
   parsedData
 ) {
-  let categoryValueTime = {};
-  
-  //These two arrays are used to organize aggregations and are stored in state for dropdowns
+
+  //*** These two arrays are used to organize aggregations and are stored in state for dropdowns
   let categories = [];
   let categoryValues = [];
 
+  //*** object with categoryValues as keys and categories as values
   let categoryValueToCategoryIndex = {};
 
+  //*** AGGREGATIONS
 
-  //1. categoryValueTime - aggregate categoryValues and timestamps around categories
+  //*** 1. categoryValueTime - aggregate categoryValues and timestamps around categories
+
+  let categoryValueTime = {};
   asSingleEntries.map(item => {
-    //check if category have been made
+    //*** check if category have been made
     if (categories.includes(item.category)) {
-      //check if values added have been made
+      //*** check if values added have been made
       if (categoryValues.includes(item.categoryValue)) {
         categoryValueTime[item.category][item.categoryValue].push(
           item.timestamp
@@ -27,24 +30,23 @@ export default async function aggregateData(
       } else {
         let t = [];
         t.push(item.timestamp);
-        categoryValueToCategoryIndex[item.categoryValue] = item.category
+        categoryValueToCategoryIndex[item.categoryValue] = item.category;
         categoryValues.push(item.categoryValue);
         categoryValueTime[item.category][item.categoryValue] = t;
       }
     } else {
       categories.push(item.category);
       categoryValues.push(item.categoryValue);
-      categoryValueToCategoryIndex[item.categoryValue] = item.category
+      categoryValueToCategoryIndex[item.categoryValue] = item.category;
       let t = [];
-      // console.log(item.timestamp)
       t.push(item.timestamp);
       categoryValueTime[item.category] = { [item.categoryValue]: t };
     }
   });
 
-  //2. dayTimeCategoryValue - aggregates on day with all timestamps and their category and category value
+  //*** 2. dayTimeCategoryValue - aggregates on day with all timestamps and their category and category value
   const dayTimeCategoryValue = dataPrepFunctions.extractDays(parsedData);
-  // console.log(categoryValueToCategoryIndex);
+
   setState(prev => ({
     ...prev,
     dayTimeCategoryValue,
