@@ -35,7 +35,8 @@ export default {
       }
 
       //add a date key and the prepared records
-      data.push({ date: date, records: records });
+      
+      date && data.push({ date: date, records: records });
 
       //clear records array for the next day
       records = [];

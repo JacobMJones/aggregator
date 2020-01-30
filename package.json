@@ -19,6 +19,7 @@
     "react-papaparse": "^1.0.5",
     "react-scripts": "3.3.0",
     "react-vis": "^1.11.7",
+    "speak-tts": "^2.0.8",
     "styled-components": "^4.4.1",
     "xlsx": "^0.15.4",
     "xlsx-parse-json": "^3.0.5"
