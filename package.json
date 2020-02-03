@@ -47,5 +47,17 @@
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.10.6"
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JacobMJones/aggregator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JacobMJones/aggregator/issues"
+  },
+  "homepage": "https://github.com/JacobMJones/aggregator#readme"
 }

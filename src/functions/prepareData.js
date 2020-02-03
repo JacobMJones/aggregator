@@ -1,5 +1,5 @@
 import dataPrepFunctions from "./dataPrepFunctions";
-import records from "../data/rec.csv";
+import records from "../../src/data/rec.csv"
 import aggregateDate from "./aggregateData.js";
 import Papa from "papaparse";
 
@@ -33,6 +33,7 @@ export default async function prepareData(setState) {
       }
     });
   });
+  console.log(parsedData)
   aggregateDate(setState, asSingleEntries, parsedData);
 }
 // let gArray = [];
