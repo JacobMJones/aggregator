@@ -3,7 +3,7 @@ import prepareData from "./functions/prepareData";
 import Dropdown from "./components/dropdown";
 import SentenceFrequency from "./components/dashboard-elements/sentence-frequency";
 import setFocus from "./functions/setFocus";
-
+import Bar from "./components/charts/bar";
 //state
 // data: array
 // dataLoaded: bool
@@ -15,6 +15,7 @@ import setFocus from "./functions/setFocus";
 // categoryValueTime: object
 // dayTimeCategoryValue: array
 // categoryValueToCategoryIndex : object
+// startStops: object
 
 function App() {
   const [state, setState] = useState({ focus: null });
@@ -22,10 +23,10 @@ function App() {
   useEffect(() => {
     //prepareData will call a function, aggregateData(), after fetch and parse are complete
     !state.dataLoaded && prepareData(setState);
-
     //populates dropdowns
     setFocus(state, setState);
   }, [state.focus]);
+
 
   return (
     <>
@@ -47,7 +48,17 @@ function App() {
           </div>
           {state.dataLoaded && (
             <>
+               <Bar state={state}  /> 
               <SentenceFrequency state={state} />
+              <br />
+              {state.startStops["cleaning"].map((item, index) => {
+                return (
+                  <div key={"startStop" + index}>
+                    {item[0]} start <br /> {item[2]} minutes cleaning
+                  </div>
+                );
+              })}
+              <br />
             </>
           )}
         </>
@@ -56,17 +67,3 @@ function App() {
   );
 }
 export default App;
-
-
-
-
-
-{/*list timestamps for selection */}
-{
-  /* {state.categoryValueTime[state.focus][state.focusedValue] &&
-            state.categoryValueTime[state.focus][state.focusedValue].map(
-              (item, index) => {
-                return <div key={"value list" + index}>{Date.parse(item)}</div>;
-              }
-            )} */
-}

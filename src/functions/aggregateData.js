@@ -1,6 +1,5 @@
 import dataPrepFunctions from "./dataPrepFunctions";
-import _ from "lodash";
-
+import moment from "moment";
 export default async function aggregateData(
   setState,
   asSingleEntries,
@@ -17,18 +16,15 @@ export default async function aggregateData(
   let startCategoryValues = [];
 
   //** final object full of startStops */
-let startStops = {}
+  let startStops = {};
   //*** AGGREGATIONS
 
   //*** 1. categoryValueTime - aggregate categoryValues and timestamps around categories
-
   let categoryValueTime = {};
   asSingleEntries.map(item => {
     //*** check if category have been made
-
     if (categories.includes(item.category)) {
       //*** check if values added have been made
-
       //The second condition is for when categoryValues are mistakenly entered in the wrong category
       if (
         categoryValues.includes(item.categoryValue) &&
@@ -69,56 +65,41 @@ let startStops = {}
 
   //** 3.  Start Stops
   let tempStartStop = [];
+  let start;
+  let stop;
   startCategoryValues.map((item, index) => {
-    let value = item.split(" ")[1]
-    let  startStopCategory = categoryValueToCategoryIndex[`start ${value}`];
+    let value = item.split(" ")[1];
+    let startStopCategory = categoryValueToCategoryIndex[`start ${value}`];
 
-    if(startStopCategory){
+    if (startStopCategory) {
       for (
         let x = 0;
         x < categoryValueTime[startStopCategory][`start ${value}`].length;
         x++
       ) {
 
-        let start = categoryValueTime[startStopCategory][`start ${value}`][x];
-        console.log(item, start)
-        let stop = categoryValueTime[startStopCategory][`stop ${value}`][x];
-       
-        tempStartStop.push([start, stop]);
+        //conditional stops situations where there are not proper start stop pairs
+      
+        if (categoryValueTime[startStopCategory][`stop ${value}`]) {
+          start = categoryValueTime[startStopCategory][`start ${value}`][x];
+          stop = categoryValueTime[startStopCategory][`stop ${value}`][x];
+        }
+
+        let w = Date.parse(stop) - Date.parse(start);
+        tempStartStop.push([start, stop, Math.round(w / 60000)]);
       }
-  
-      startStops[value] = tempStartStop
+      startStops[value] = tempStartStop;
       tempStartStop = [];
     }
-   
   });
-
-  // const testVal = "cleaning";
-  // const startStopCategory = categoryValueToCategoryIndex[`start ${testVal}`];
-  // for (
-  //   let x = 0;
-  //   x < categoryValueTime[startStopCategory][`start ${testVal}`].length;
-  //   x++
-  // ) {
-  //   let start = categoryValueTime[startStopCategory][`start ${testVal}`][x];
-  //   let stop = categoryValueTime[startStopCategory][`stop ${testVal}`][x];
-
-  //   cleaningStartStop.push([start, stop]);
-  // }
-
-  console.log(startStops);
-  //   categoryValueTime["Daily Routine"]['start cleaning'].map((item, index) => {
-
-  // console.log(item)
-  //   })
-
-  console.log(dayTimeCategoryValue);
+  
   setState(prev => ({
     ...prev,
     dayTimeCategoryValue,
     categoryValueToCategoryIndex,
     categoryValueTime,
     categories,
+    startStops: startStops,
     dataLoaded: true,
     focus: categories[1]
   }));

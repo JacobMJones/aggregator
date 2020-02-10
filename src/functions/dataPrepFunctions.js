@@ -5,12 +5,14 @@ export default {
     return self.indexOf(value) === index;
   },
 
-  fetchCsv: function fetchCsv(csv) {
-    return fetch(csv).then(function(response) {
-      let reader = response.body.getReader();
-      let decoder = new TextDecoder("utf-8");
-      return reader.read().then(function(result) {
-        return decoder.decode(result.value);
+  fetchCsv: function fetchCsv(csv)  {
+    return  fetch(csv).then(async function(response) {
+
+     console.log(response)
+      let reader = await response.body.getReader();
+      let decoder = await new TextDecoder("utf-8");
+      return reader.read().then(async function(result) {
+        return await decoder.decode(result.value);
       });
     });
   },
