@@ -11,6 +11,8 @@ const BarGraph = ({ state }) => {
   const labels = state.startStops.cleaning.map((item, index) => {
     return item[0];
   });
+
+  
   const finalData = {
     labels: labels,
     datasets: [
@@ -21,6 +23,7 @@ const BarGraph = ({ state }) => {
         borderWidth: 2,
         data: data
       }
+
     ]
   };
 

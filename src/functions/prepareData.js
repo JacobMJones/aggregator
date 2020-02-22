@@ -6,8 +6,8 @@ import moment from 'moment';
 export default async function prepareData(setState) {
   //pull csv data into the app
   let asSingleEntries = [];
-  const csvData = await dataPrepFunctions.fetchCsv(records);
-
+  const csvData = await fetch(`${process.env.PUBLIC_URL}/rec.csv`).then(r => r.text())
+ 
   //use papaparse library to convert csvData into an array of objects. Each header becomes a key.
   //Papa returns an object , data key contains what we want
 
