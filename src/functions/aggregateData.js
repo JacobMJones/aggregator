@@ -5,6 +5,7 @@ export default async function aggregateData(
   asSingleEntries,
   parsedData
 ) {
+
   //*** These two arrays are used to organize aggregations and are stored in state for dropdowns
   let categories = [];
   let categoryValues = [];
@@ -60,6 +61,8 @@ export default async function aggregateData(
     }
   });
 
+  console.log('categoryValueTime', categoryValueTime);
+
   //*** 2. dayTimeCategoryValue - aggregates on day with all timestamps and their category and category value
   const dayTimeCategoryValue = dataPrepFunctions.extractDays(parsedData);
 
@@ -92,6 +95,8 @@ export default async function aggregateData(
       tempStartStop = [];
     }
   });
+
+  console.log('startStops', startStops);
   
   setState(prev => ({
     ...prev,

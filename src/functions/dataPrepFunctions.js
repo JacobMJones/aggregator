@@ -5,15 +5,42 @@ export default {
     return self.indexOf(value) === index;
   },
 
-  fetchCsv: function fetchCsv(csv)  {
+  fetchCsv: async function fetchCsv(csv)  {
     return  fetch(csv).then(async function(response) {
 
-     console.log(response)
       let reader = await response.body.getReader();
-      let decoder = await new TextDecoder("utf-8");
-      return reader.read().then(async function(result) {
-        return await decoder.decode(result.value);
+      let decoder = new TextDecoder("utf-8");
+
+      let charsReceived = 0;
+      let result = '';
+
+      // read() returns a promise that resolves
+      // when a value has been received
+      return reader.read().then(function processText({ done, value }) {
+        // Result objects contain two properties:
+        // done  - true if the stream has already given you all its data.
+        // value - some data. Always undefined when done is true.
+        if (done) {
+          const x = result
+                .split(',')
+                .map(Number)
+                .reduce((acc, b) => acc + String.fromCharCode(parseInt(b, 10)), '')
+          console.log(x)
+          return x;
+        }
+
+        // value for fetch streams is a Uint8Array
+        charsReceived += value.length;
+        const chunk = value;
+        result += chunk;
+
+        // Read some more, and call this function again
+        return reader.read().then(processText);
       });
+      
+      // return reader.read().then(async function(result) {
+      //   return await decoder.decode(result.value);
+      // });
     });
   },
   extractDays: function extractDays(parsedData) {

@@ -1,20 +1,25 @@
 import dataPrepFunctions from "./dataPrepFunctions";
 import records from "../../src/data/rec.csv";
 import aggregateDate from "./aggregateData.js";
+import aggregateDataV1 from "./aggregateDataV1.js"
+import aggregateDataV2 from "./aggregateDataV2.js"
 import Papa from "papaparse";
 import moment from 'moment';
 export default async function prepareData(setState) {
   //pull csv data into the app
   let asSingleEntries = [];
-  const csvData = await dataPrepFunctions.fetchCsv(records);
+  // const csvData = await dataPrepFunctions.fetchCsv(records);
+  const csvData = await fetch('/rec.csv')
+        .then(r => r.text())
 
   //use papaparse library to convert csvData into an array of objects. Each header becomes a key.
   //Papa returns an object , data key contains what we want
 
-  let papaObject = Papa.parse(csvData, {
+  let papaObject = await Papa.parse(csvData, {
     header: true,
     skipEmptyLines: true
   });
+
 
   const parsedData = papaObject.data;
 
@@ -25,7 +30,6 @@ export default async function prepareData(setState) {
   }] */
   parsedData.map((item, index) => {
    const time =  moment(item.Timestamp, 'MM/DD/YYYY HH:mm:ss a').format('YYYY-MM-DD HH:mm:ss')
-   console.log(index)
     Object.keys(item).forEach(key => {
       if (item[key]) {
         if (key !== "Timestamp") {
@@ -42,5 +46,9 @@ export default async function prepareData(setState) {
     });
   });
 
+  console.log('aggregateDataV1', aggregateDataV1(parsedData))
+  console.log('aggregateDataV2', aggregateDataV2(parsedData))
+
   aggregateDate(setState, asSingleEntries, parsedData);
+
 }
